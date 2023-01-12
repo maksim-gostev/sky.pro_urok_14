@@ -55,7 +55,7 @@ def search_by_rating(rating):
 
     with sqlite3.connect("netflix.db") as con:
         cur = con.cursor()
-        sqlite_query = ("select title, rating, description "
+        sqlite_query = ("SELECT title, rating, description "
                         "FROM netflix "
                         "WHERE rating IN {}" .format(rating))
         cur.execute(sqlite_query)
@@ -70,8 +70,28 @@ def search_by_rating(rating):
         result_list.append(result_dict)
     return result_list
 
+def search_by_genre(genre):
+    with sqlite3.connect("netflix.db") as con:
+        cur = con.cursor()
+        sqlite_query = ("SELECT title, description "
+                        "FROM netflix "
+                        f"WHERE listed_in LIKE '%{genre}%' "
+                        "ORDER BY date_added DESC "
+                        "LIMIT 10")
+        cur.execute(sqlite_query)
+        result = cur.fetchall()
+    result_list = []
+    for res in result:
+        result_dict = {
+            "title": res[0],
+            "description": res[1]
+        }
+        result_list.append(result_dict)
+    return result_list
 
-pprint.pprint(definition_of_the_rating('children'))
+
+
+pprint.pprint(search_by_genre('International TV Shows'))
 
 
 
