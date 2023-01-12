@@ -1,4 +1,5 @@
 import sqlite3
+import pprint
 
 
 def search_by_name(title):
@@ -39,7 +40,38 @@ def search_by_range_of_release_years(year_1, year_2):
         result_list.append(result_dict)
     return result_list
 
+def definition_of_the_rating(rating):
+    if rating == 'children':
+        rating_tuplt = ('G', 'TV-G')
+        print(type(rating_tuplt))
+    elif rating == 'family':
+        rating_tuplt = ('G', 'PG', 'PG-13', 'TV-PG')
+    elif rating == 'adult':
+        rating_tuplt = ('R', 'NC-17')
 
+    result = search_by_rating(rating_tuplt)
+    return result
+def search_by_rating(rating):
+
+    with sqlite3.connect("netflix.db") as con:
+        cur = con.cursor()
+        sqlite_query = ("select title, rating, description "
+                        "FROM netflix "
+                        "WHERE rating IN {}" .format(rating))
+        cur.execute(sqlite_query)
+        result = cur.fetchall()
+    result_list = []
+    for res in result:
+        result_dict = {
+                       "title": res[0],
+                       "rating": res[1],
+                       "description": res[2]
+                      }
+        result_list.append(result_dict)
+    return result_list
+
+
+pprint.pprint(definition_of_the_rating('children'))
 
 
 
